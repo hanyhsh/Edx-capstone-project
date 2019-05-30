@@ -1,0 +1,80 @@
+---
+title: "Movielens Recommendation system "
+author: "Hany Awadalla"
+date: "May 29, 2019"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+## Movielens Recommendation system Project
+
+The goal of this project is to built a recommendation system with different method to achieve the best fiting module algorithm  that gives us the least Root Mean Square Error (RMSE) so that we will Predict values of other dataset.
+
+- The data that we are using its 10M set of the original data set, we will have edx data set as the (training set) and validation data set to validate our prediction.
+
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+source('movielens_project.r', echo = FALSE, verbose = FALSE)
+```
+
+# here is a sample of how edx data set looks like.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+head(edx) %>% knitr::kable()
+```
+
+
+## I will use different methods to develop the  algorithm using the edx set. For a final test of the algorithm i will predict movie ratings in the validation set as if they were unknown. RMSE will be used to evaluate how close is the predictions are to the true values in the validation set.
+
+
+The edx set consists of `r dim(edx)[1]` rows and `r dim(edx)[2]` columns and
+
+
+* `r n_distinct(edx$userId)`  userID.
+
+* `r n_distinct(edx$movieId)` movies.
+
+* the data set has no missing values.
+
+Here is graph for the top 10 movies according to ratings.
+
+```{r echo=FALSE}
+top_10 <- edx %>%
+  group_by(title) %>%
+  summarize(count=n()) %>%
+  top_n(10,count) %>%
+  arrange(desc(count))
+top_10 %>% ggplot(aes(x=reorder(title, count), y= count)) +
+  geom_bar(stat='identity', color="red", fill= "brown") + coord_flip() +
+  geom_text(aes(label= count), hjust=3, size=5)
+```
+
+
+# check the best fitting module  
+
+the methods that im gonna use are:
+
+- Use just the average.
+
+- use Movie Effect on the Model.
+
+- use Movie and User Effect on the Model.
+
+- use Regularization method on the Model for best fit.
+
+
+
+# Here is the results for our models.
+
+```{r echo=FALSE}
+rmse_results %>% knitr::kable()
+
+rmse_results %>% ggplot(aes(x=reorder(method,RMSE),y= RMSE)) +
+  geom_bar(stat='identity', color="red", fill= "blue")+
+  geom_text(aes(label=round(RMSE, digits = 5), hjust=0.4, vjust=2 ,size=5))
+```
+
+# Summarization
+
+#According to the last model we could achieve RMSE of 0.86482, Which we could achieve our target.
